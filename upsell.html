@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oferta Especial</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="upsell.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <h1 class="title">Atenção: Assista a este vídeo antes de continuar...</h1>
+
+    <div class="video-wrapper">
+      <!-- MODO 1: Vídeo direto do computador (MP4) -->
+      <!-- Substitua o ./vsl.mp4 pelo nome do seu arquivo de vídeo (ex: meuvideo.mp4) -->
+      <video id="promoVideo" src="./vsl.mp4" playsinline autoplay muted></video>
+
+      <!-- Botão de Unmute Dinâmico com Layout de Box Escura -->
+      <div class="unmute-overlay" id="unmuteOverlay">
+        <div class="unmute-box">
+          <div class="unmute-text">Seu vídeo já começou</div>
+          <svg class="unmute-icon" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9v6h4l5 5V4L7 9H3z" />
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+            <path
+              d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+            <line x1="2" y1="2" x2="22" y2="22" stroke="white" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <div class="unmute-text">Clique para ouvir</div>
+        </div>
+      </div>
+
+      <!-- MODO 2: Usar link do YouTube, Vimeo ou Vturb -->
+      <!-- Caso queira usar um link, apague todo o MODO 1 acima (o botão de unmute e o <video>), tire o código abaixo dos comentários e insira o seu link: -->
+      <!-- <iframe src="SEU_LINK_AQUI" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe> -->
+
+      <!-- Barra de progresso Falsa (Fita inferior) -->
+      <div class="fake-progress-container">
+        <div class="fake-progress-bar" id="fakeProgressBar"></div>
+      </div>
+    </div>
+
+    <!-- Conteúdo que aparece após 11 segundos -->
+    <div class="delayed-content" id="delayedContent">
+      <a href="#" class="btn-cta" id="ctaAccept">Sim, Eu Quero o meu Plano!</a>
+
+      <!-- Cole o seu Link Externo / Downsell dentro do href abaixo, mantendo as aspas. Exemplo: href="https://google.com" -->
+      <a href="https://www.valentier.com.br" class="btn-decline">Não, Prefiro perder essa oportunidade.</a>
+    </div>
+  </div>
+
+  <script>
+    // Configuração do atraso (Delay) em milissegundos
+    // 11 segundos = 11000 milissegundos
+    const delayEmMilissegundos = 11000;
+
+    setTimeout(function () {
+      document.getElementById('delayedContent').style.display = 'block';
+    }, delayEmMilissegundos);
+
+    // Lógica de Unmute e Play dinâmico do vídeo (Estilo VSL)
+    const video = document.getElementById('promoVideo');
+    const unmuteOverlay = document.getElementById('unmuteOverlay');
+
+    if (unmuteOverlay && video) {
+      unmuteOverlay.addEventListener('click', function () {
+        video.muted = false;         // Ativa o som
+        // video.controls = true;    // Deixei desativado para ocultar a barra de progresso nativa e não estragar a mágica
+        video.currentTime = 0;       // Reinicia o vídeo do começo
+        video.play();                // Garante que continue tocando
+        unmuteOverlay.classList.add('hidden'); // Esconde o botão gigante
+      });
+
+      // Pausar/Despausar clicando no próprio vídeo (já que escondemos os controles padrões)
+      video.addEventListener('click', function () {
+        if (!video.muted) { // Só permite pausar se já passou da tela de "unmute"
+          if (video.paused) video.play();
+          else video.pause();
+        }
+      });
+
+      // Lógica da Barra de Progresso Psicológica (Falsa) a 60fps (Super Fluido e Liso)
+      const fakeProgressBar = document.getElementById('fakeProgressBar');
+
+      function updateFakeProgress() {
+        if (video.duration && fakeProgressBar) {
+          const realProgress = video.currentTime / video.duration; // De 0.0 a 1.0
+
+          // Matemática Psicológica para VSL (Rápido no inicio, freia no final)
+          let fakeProgress = Math.pow(realProgress, 0.4) * 100;
+          if (fakeProgress > 100) fakeProgress = 100; // Limite Máximo
+
+          fakeProgressBar.style.width = fakeProgress + '%';
+        }
+
+        // Chama o próximo quadro de tela em sincronia com o navegador (Padrão Ouro de Smoothness)
+        requestAnimationFrame(updateFakeProgress);
+      }
+
+      // Dá a ignição inicial do loop de atualização a 60fps
+      requestAnimationFrame(updateFakeProgress);
+    }
+
+    // Repassa os parametros de URL para a página de checkout
+    document.getElementById('ctaAccept').addEventListener('click', function(e) {
+      e.preventDefault();
+      const params = window.location.search; // ex: ?w=75&gw=65&g=Feminino&u=kg
+      
+      document.body.style.transition = "all 0.8s ease-in-out";
+      document.body.style.opacity = "0";
+      document.body.style.transform = "scale(0.98)";
+      
+      setTimeout(() => {
+        window.location.href = 'valentier-checkout.html' + params;
+      }, 800);
+    });
+  </script>
+
+</body>
+
+</html>
